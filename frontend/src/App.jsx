@@ -1,15 +1,14 @@
-import { useState } from 'react'
-import './App.css'
-import { AppRoutes } from './routes/AppRoutes'
+import './App.css';
+import { AppRoutes } from './routes/AppRoutes';
+import { UserProvider } from './context/user.context';
 
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
-    <>
-        <AppRoutes/>
-    </>
-  )
+    // Wrapping the application with UserProvider to provide global state
+    <UserProvider>
+      <AppRoutes />
+    </UserProvider>
+  );
 }
 
-export default App
+export default App;
