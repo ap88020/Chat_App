@@ -1,18 +1,29 @@
-import userModel from "../models/user.model.js";
+import userModel from '../models/user.model.js';
 
-export const createUser = async ({ email, password }) => {
+
+
+export const createUser = async ({
+    email, password
+}) => {
+
     if (!email || !password) {
-        throw new Error("Email or password are required");
+        throw new Error('Email and password are required');
     }
 
-    // Create the user - password will be hashed automatically in the pre-save hook
+    const hashedPassword = await userModel.hashPassword(password);
+
     const user = await userModel.create({
         email,
-        password,
+        password: hashedPassword
     });
 
-    // Generate JWT token for the user
-    const token = user.generateJWT();
+    return user;
 
-    return { user, token }; // Return the user and token
-};
+}
+
+export const getAllUsers = async ({ userId }) => {
+    const users = await userModel.find({
+        _id: { $ne: userId }
+    });
+    return users;
+}
