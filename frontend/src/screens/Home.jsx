@@ -1,4 +1,5 @@
-import React, { useContext, useState , useEffect} from 'react';
+import React, { useContext, useState , useEffect } from 'react';
+import {useNavigate} from 'react-router-dom'
 import { UserContext } from '../context/user.context';
 import axios from '../config/axios.js';
 
@@ -7,6 +8,8 @@ export const Home = () => {
   const [isModalOpen, setModal] = useState(false);
   const [projectName, setProjectName] = useState('');
   const [error, setError] = useState(null);
+  const [project,setPrject] = useState([]);
+  const navigate = useNavigate();
 
   const handleOpenModal = () => {
     setModal(true);
@@ -35,9 +38,10 @@ export const Home = () => {
   };
   
   useEffect( () => {
-    axios.get('/project/all')
+    axios.get('/projects/all')
     .then((res) => {
       console.log(res.data);
+      setPrject(res.data.projects);
     }).catch(err => {
       console.log(err);
     })
@@ -53,6 +57,22 @@ export const Home = () => {
         >
           <i className="ri-links-line"></i>
         </button>
+      </div>
+      <div className="flex flex-wrap gap-3 w-auto shadow-sm mt-4 cursor-pointer">
+        {project.length > 0 ? (
+          project.map((e) => (
+            <div
+            onClick={() => navigate('/project', { state: { project: e } })}
+
+             key={e._id} className="p-4 border rounded-md bg-gray-100 hover:bg-gray-200 select-none">
+              
+              <h3 className="font-semibold">{e.name}</h3>
+              <p><i className="ri-group-fill"></i> <small>collaborators :</small> {e.users.length}</p>
+            </div>
+          ))
+        ) : (
+          <p className="text-gray-500">No projects found.</p>
+        )}
       </div>
       {isModalOpen && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
